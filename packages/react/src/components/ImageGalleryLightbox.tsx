@@ -265,8 +265,9 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
 
   // Download actions
   const handleDownloadAnnotated = async () => {
-    if (!imgRef.current) return;
-    await downloadAnnotatedImage(imgRef.current, strokes, {
+    const targetSource = effectiveSrc || currentItem?.src || imgRef.current?.src || "";
+    if (!targetSource) return;
+    await downloadAnnotatedImage(targetSource, strokes, {
       format: "image/png",
       includeAnnotations: true,
       fileName: `tbib-gallery-${currentIndex + 1}-annotated.png`,
@@ -274,8 +275,9 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
   };
 
   const handleDownloadClean = async () => {
-    if (!imgRef.current) return;
-    await downloadAnnotatedImage(imgRef.current, [], {
+    const targetSource = effectiveSrc || currentItem?.src || imgRef.current?.src || "";
+    if (!targetSource) return;
+    await downloadAnnotatedImage(targetSource, [], {
       format: "image/png",
       includeAnnotations: false,
       fileName: `tbib-gallery-${currentIndex + 1}-clean.png`,

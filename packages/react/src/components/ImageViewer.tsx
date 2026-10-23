@@ -215,8 +215,9 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
 
   // Download actions
   const handleDownloadAnnotated = async () => {
-    if (!imgRef.current) return;
-    await downloadAnnotatedImage(imgRef.current, strokes, {
+    const targetSource = effectiveSrc || imgRef.current?.src || "";
+    if (!targetSource) return;
+    await downloadAnnotatedImage(targetSource, strokes, {
       format: "image/png",
       includeAnnotations: true,
       fileName: `tbib-annotated-${Date.now()}.png`,
@@ -224,8 +225,9 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
   };
 
   const handleDownloadClean = async () => {
-    if (!imgRef.current) return;
-    await downloadAnnotatedImage(imgRef.current, [], {
+    const targetSource = effectiveSrc || imgRef.current?.src || "";
+    if (!targetSource) return;
+    await downloadAnnotatedImage(targetSource, [], {
       format: "image/png",
       includeAnnotations: false,
       fileName: `tbib-clean-${Date.now()}.png`,
