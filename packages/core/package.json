@@ -1,6 +1,6 @@
 {
   "name": "@tbib-image-viewer/core",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Framework-agnostic coordinate math, annotation engine, stroke smoothing, and native-res canvas export for TBiB Image Viewer",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
