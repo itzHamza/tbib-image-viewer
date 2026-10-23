@@ -71,59 +71,85 @@
   align-items: center;
   gap: 6px;
   z-index: 50;
-  padding: 0 12px;
+  padding: 0 10px;
   pointer-events: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Main Toolbar */
+/* Main Toolbar Pill: Always a complete, unbroken floating pill */
 .tbib-iv-toolbar {
   pointer-events: auto;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 4px;
   background: var(--tbib-iv-surface);
   border: 1px solid var(--tbib-iv-border);
   box-shadow: var(--tbib-iv-shadow);
-  border-radius: 1rem;
-  padding: 6px 8px;
-  max-width : calc(100dvw - 20dvw);
+  border-radius: 9999px;
+  max-width: min(calc(100% - 16px), 720px);
+  width: auto;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Inner Horizontal Scroll Track: Buttons scroll seamlessly inside the pill */
+.tbib-iv-toolbar-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   white-space: nowrap;
-  flex-shrink: 0;
-  position: relative;
+  width: 100%;
+  overscroll-behavior-x: contain;
+  mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
 }
 
-.tbib-iv-toolbar::-webkit-scrollbar {
+.tbib-iv-toolbar-scroll::-webkit-scrollbar {
   display: none;
 }
 
 /* Secondary Sub-toolbar for Colors & Thickness */
 .tbib-iv-subtoolbar {
   pointer-events: auto;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
   background: var(--tbib-iv-surface);
   border: 1px solid var(--tbib-iv-border);
   box-shadow: var(--tbib-iv-shadow);
-  border-radius: 0.85rem;
-  padding: 5px 10px;
-  max-width: calc(100dvw - 20dvw);
+  border-radius: 9999px;
+  max-width: min(calc(100% - 16px), 640px);
+  width: auto;
+  overflow: hidden;
+  flex-shrink: 0;
+  animation: tbib-slide-down 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tbib-iv-subtoolbar-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   white-space: nowrap;
-  flex-shrink: 0;
-  animation: tbib-slide-down 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  overscroll-behavior-x: contain;
+  mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
 }
 
-.tbib-iv-subtoolbar::-webkit-scrollbar {
+.tbib-iv-subtoolbar-scroll::-webkit-scrollbar {
   display: none;
 }
 
@@ -598,26 +624,20 @@
     align-items: center;
   }
   .tbib-iv-toolbar {
-    max-width: min(calc(100vw - 12px), calc(100dvw - 12px));
-    width: max-content;
-    padding: 4px 6px;
+    max-width: calc(100% - 10px);
+    border-radius: 9999px;
+  }
+  .tbib-iv-toolbar-scroll {
+    padding: 4px 8px;
     gap: 3px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
-    overscroll-behavior-x: contain;
   }
   .tbib-iv-subtoolbar {
-    max-width: min(calc(100vw - 12px), calc(100dvw - 12px));
-    width: max-content;
-    padding: 4px 6px;
+    max-width: calc(100% - 10px);
+    border-radius: 9999px;
+  }
+  .tbib-iv-subtoolbar-scroll {
+    padding: 4px 8px;
     gap: 5px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
-    overscroll-behavior-x: contain;
   }
   .tbib-iv-btn {
     min-width: 32px;

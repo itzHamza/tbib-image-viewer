@@ -94,25 +94,25 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
 }) => {
   const showSubtoolbar = activeTool === "pen" || activeTool === "highlighter" || activeTool === "laser";
 
-  const toolbarRef = React.useRef<HTMLElement>(null);
-  const subtoolbarRef = React.useRef<HTMLDivElement>(null);
+  const toolbarScrollRef = React.useRef<HTMLDivElement>(null);
+  const subtoolbarScrollRef = React.useRef<HTMLDivElement>(null);
 
   const toolbarTouchState = React.useRef({ isDown: false, startX: 0, scrollLeft: 0 });
   const subtoolbarTouchState = React.useRef({ isDown: false, startX: 0, scrollLeft: 0 });
 
   const handleToolbarTouchStart = (e: React.TouchEvent) => {
-    if (!toolbarRef.current) return;
+    if (!toolbarScrollRef.current) return;
     toolbarTouchState.current = {
       isDown: true,
       startX: e.touches[0].clientX,
-      scrollLeft: toolbarRef.current.scrollLeft,
+      scrollLeft: toolbarScrollRef.current.scrollLeft,
     };
   };
 
   const handleToolbarTouchMove = (e: React.TouchEvent) => {
-    if (!toolbarTouchState.current.isDown || !toolbarRef.current) return;
+    if (!toolbarTouchState.current.isDown || !toolbarScrollRef.current) return;
     const dx = e.touches[0].clientX - toolbarTouchState.current.startX;
-    toolbarRef.current.scrollLeft = toolbarTouchState.current.scrollLeft - dx;
+    toolbarScrollRef.current.scrollLeft = toolbarTouchState.current.scrollLeft - dx;
   };
 
   const handleToolbarTouchEnd = () => {
@@ -120,18 +120,18 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
   };
 
   const handleSubtoolbarTouchStart = (e: React.TouchEvent) => {
-    if (!subtoolbarRef.current) return;
+    if (!subtoolbarScrollRef.current) return;
     subtoolbarTouchState.current = {
       isDown: true,
       startX: e.touches[0].clientX,
-      scrollLeft: subtoolbarRef.current.scrollLeft,
+      scrollLeft: subtoolbarScrollRef.current.scrollLeft,
     };
   };
 
   const handleSubtoolbarTouchMove = (e: React.TouchEvent) => {
-    if (!subtoolbarTouchState.current.isDown || !subtoolbarRef.current) return;
+    if (!subtoolbarTouchState.current.isDown || !subtoolbarScrollRef.current) return;
     const dx = e.touches[0].clientX - subtoolbarTouchState.current.startX;
-    subtoolbarRef.current.scrollLeft = subtoolbarTouchState.current.scrollLeft - dx;
+    subtoolbarScrollRef.current.scrollLeft = subtoolbarTouchState.current.scrollLeft - dx;
   };
 
   const handleSubtoolbarTouchEnd = () => {
@@ -141,24 +141,23 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
   return (
     <div className="tbib-iv-toolbar-wrapper">
       {/* Primary Toolbar Row */}
-      <header
-        ref={toolbarRef}
-        className="tbib-iv-toolbar"
-        role="toolbar"
-        aria-label="Image tools"
-        onTouchStart={handleToolbarTouchStart}
-        onTouchMove={handleToolbarTouchMove}
-        onTouchEnd={handleToolbarTouchEnd}
-      >
-        {/* Gallery slide indicator */}
-        {currentIndex !== undefined && totalImages !== undefined && totalImages > 1 && (
-          <>
-            <span className="tbib-iv-tabular" title="Current Image">
-              {currentIndex + 1} / {totalImages}
-            </span>
-            <div className="tbib-iv-divider" />
-          </>
-        )}
+      <header className="tbib-iv-toolbar" role="toolbar" aria-label="Image tools">
+        <div
+          ref={toolbarScrollRef}
+          className="tbib-iv-toolbar-scroll"
+          onTouchStart={handleToolbarTouchStart}
+          onTouchMove={handleToolbarTouchMove}
+          onTouchEnd={handleToolbarTouchEnd}
+        >
+          {/* Gallery slide indicator */}
+          {currentIndex !== undefined && totalImages !== undefined && totalImages > 1 && (
+            <>
+              <span className="tbib-iv-tabular" title="Current Image">
+                {currentIndex + 1} / {totalImages}
+              </span>
+              <div className="tbib-iv-divider" />
+            </>
+          )}
 
         {/* Hand / Pan tool */}
         <button
@@ -335,81 +334,82 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
             </button>
           </>
         )}
+        </div>
       </header>
 
       {/* Secondary Subtoolbar: Directly displays Stroke Thickness & Color Swatches */}
       {showSubtoolbar && (
-        <div
-          ref={subtoolbarRef}
-          className="tbib-iv-subtoolbar"
-          role="region"
-          aria-label="Tool customization"
-          onTouchStart={handleSubtoolbarTouchStart}
-          onTouchMove={handleSubtoolbarTouchMove}
-          onTouchEnd={handleSubtoolbarTouchEnd}
-        >
-          {/* Thickness buttons (for pen and highlighter) */}
-          {activeTool !== "laser" && (
-            <div className="tbib-iv-thickness-group">
-              {THICKNESS_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  className={`tbib-iv-thickness-btn ${strokeWidth === opt.value ? "tbib-iv-thickness-active" : ""}`}
-                  onClick={() => onStrokeWidthChange(opt.value)}
-                  title={`${opt.label} stroke (${opt.value}px)`}
-                >
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: `${Math.min(opt.value * 1.5, 12)}px`,
-                      height: `${Math.min(opt.value * 1.5, 12)}px`,
-                      borderRadius: "50%",
-                      backgroundColor: "currentColor",
-                    }}
+        <div className="tbib-iv-subtoolbar" role="region" aria-label="Tool customization">
+          <div
+            ref={subtoolbarScrollRef}
+            className="tbib-iv-subtoolbar-scroll"
+            onTouchStart={handleSubtoolbarTouchStart}
+            onTouchMove={handleSubtoolbarTouchMove}
+            onTouchEnd={handleSubtoolbarTouchEnd}
+          >
+            {/* Thickness buttons (for pen and highlighter) */}
+            {activeTool !== "laser" && (
+              <div className="tbib-iv-thickness-group">
+                {THICKNESS_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`tbib-iv-thickness-btn ${strokeWidth === opt.value ? "tbib-iv-thickness-active" : ""}`}
+                    onClick={() => onStrokeWidthChange(opt.value)}
+                    title={`${opt.label} stroke (${opt.value}px)`}
+                  >
+                    <span
+                      style={{
+                        display: "inline-block",
+                        width: `${Math.min(opt.value * 1.5, 12)}px`,
+                        height: `${Math.min(opt.value * 1.5, 12)}px`,
+                        borderRadius: "50%",
+                        backgroundColor: "currentColor",
+                      }}
+                    />
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {activeTool === "laser" && (
+              <span style={{ fontSize: "11px", color: "var(--tbib-iv-text-muted)", fontStyle: "italic", paddingRight: "4px" }}>
+                Laser Beam Color:
+              </span>
+            )}
+
+            <div className="tbib-iv-divider" style={{ height: "16px", margin: "0 2px" }} />
+
+            {/* Color swatches */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              {PRESET_COLORS.map((c) => {
+                const isSelected = color.toLowerCase() === c.toLowerCase();
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`tbib-iv-swatch-btn ${isSelected ? "tbib-iv-swatch-active" : ""}`}
+                    style={{ backgroundColor: c }}
+                    onClick={() => onColorChange(c)}
+                    title={`Select color: ${c}`}
+                    aria-label={`Color ${c}`}
                   />
-                  <span>{opt.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
+                );
+              })}
 
-          {activeTool === "laser" && (
-            <span style={{ fontSize: "11px", color: "var(--tbib-iv-text-muted)", fontStyle: "italic", paddingRight: "4px" }}>
-              Laser Beam Color:
-            </span>
-          )}
-
-          <div className="tbib-iv-divider" style={{ height: "16px", margin: "0 2px" }} />
-
-          {/* Color swatches */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            {PRESET_COLORS.map((c) => {
-              const isSelected = color.toLowerCase() === c.toLowerCase();
-              return (
-                <button
-                  key={c}
-                  type="button"
-                  className={`tbib-iv-swatch-btn ${isSelected ? "tbib-iv-swatch-active" : ""}`}
-                  style={{ backgroundColor: c }}
-                  onClick={() => onColorChange(c)}
-                  title={`Select color: ${c}`}
-                  aria-label={`Color ${c}`}
+              {/* Custom Color Picker Input */}
+              <label className="tbib-iv-custom-color-btn" title="Custom Color Picker">
+                <FontAwesomeIcon icon={faEyeDropper} style={{ fontSize: "10px", opacity: 0.8 }} />
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => onColorChange(e.target.value)}
+                  className="tbib-iv-custom-color-input"
+                  aria-label="Custom color picker"
                 />
-              );
-            })}
-
-            {/* Custom Color Picker Input */}
-            <label className="tbib-iv-custom-color-btn" title="Custom Color Picker">
-              <FontAwesomeIcon icon={faEyeDropper} style={{ fontSize: "10px", opacity: 0.8 }} />
-              <input
-                type="color"
-                value={color}
-                onChange={(e) => onColorChange(e.target.value)}
-                className="tbib-iv-custom-color-input"
-                aria-label="Custom color picker"
-              />
-            </label>
+              </label>
+            </div>
           </div>
         </div>
       )}
