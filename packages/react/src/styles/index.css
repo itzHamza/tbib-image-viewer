@@ -309,19 +309,160 @@
 
 .tbib-iv-stage-inner {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   will-change: transform;
   transform-origin: center center;
   user-select: none;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* Image Element */
 .tbib-iv-image {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
+  max-width: min(92vw, 100%);
+  max-height: min(78vh, calc(100vh - 160px));
+  width: auto;
+  height: auto;
   object-fit: contain;
   pointer-events: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.tbib-iv-image-loading {
+  opacity: 0;
+}
+
+.tbib-iv-image-loaded {
+  opacity: 1;
+}
+
+/* Loading & Error Status Overlays */
+.tbib-iv-status-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.tbib-iv-spinner {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  box-shadow: var(--tbib-iv-shadow);
+}
+
+.tbib-iv-spinner-icon {
+  font-size: 22px;
+  color: var(--tbib-iv-accent);
+}
+
+.tbib-iv-status-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tbib-iv-text);
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: var(--tbib-iv-shadow);
+}
+
+/* Error Card Overlay */
+.tbib-iv-error-card {
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  border-radius: 1.25rem;
+  padding: 24px 28px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+  max-width: 420px;
+  width: calc(100vw - 32px);
+  text-align: center;
+  animation: tbib-slide-down 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tbib-iv-error-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #f43f5e;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.tbib-iv-error-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tbib-iv-text);
+  margin: 0;
+}
+
+.tbib-iv-error-desc {
+  font-size: 13px;
+  color: var(--tbib-iv-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tbib-iv-error-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.tbib-iv-retry-btn {
+  background: var(--tbib-iv-accent) !important;
+  color: #ffffff !important;
+  border: 1px solid transparent !important;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 0.75rem;
+}
+
+.tbib-iv-retry-btn:hover {
+  background: var(--tbib-iv-accent-hover) !important;
+  transform: translateY(-1px);
+}
+
+.tbib-iv-open-btn {
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 0.75rem;
+  background: var(--tbib-iv-surface-hover);
+  border: 1px solid var(--tbib-iv-border);
+  color: var(--tbib-iv-text);
+}
+
+.tbib-iv-open-btn:hover {
+  color: var(--tbib-iv-accent);
+  border-color: var(--tbib-iv-accent-subtle);
 }
 
 /* Annotation SVG Layer */

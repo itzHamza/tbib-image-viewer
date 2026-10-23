@@ -1,4 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSpinner,
+  faRotateRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons/faExternalLinkAlt";
 import type {
   AnnotationStroke,
   InteractionMode,
@@ -51,10 +58,31 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
-  // Image layout dimensions
+  // Image layout & load status
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgSize, setImgSize] = useState({ width: 800, height: 600 });
+  const [imageStatus, setImageStatus] = useState<"loading" | "loaded" | "error">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const effectiveSrc = useMemo(() => {
+    if (!src) return "";
+    if (reloadKey === 0) return src;
+    const sep = src.includes("?") ? "&" : "?";
+    return `${src}${sep}_reload=${reloadKey}`;
+  }, [src, reloadKey]);
+
+  // Check if image changes or reloadKey changes
+  useEffect(() => {
+    setImageStatus("loading");
+    if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
+      setImgSize({
+        width: imgRef.current.naturalWidth,
+        height: imgRef.current.naturalHeight,
+      });
+      setImageStatus("loaded");
+    }
+  }, [src, reloadKey]);
 
   // Transforms
   const {
@@ -97,6 +125,16 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
       width: img.naturalWidth || img.width,
       height: img.naturalHeight || img.height,
     });
+    setImageStatus("loaded");
+  };
+
+  const handleImageError = () => {
+    setImageStatus("error");
+  };
+
+  const handleReload = () => {
+    setImageStatus("loading");
+    setReloadKey((prev) => prev + 1);
   };
 
   const handleStrokeComplete = useCallback(
@@ -263,16 +301,17 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
           {/* Target Base Image */}
           <img
             ref={imgRef}
-            src={src}
+            key={`${src}-${reloadKey}`}
+            src={effectiveSrc}
             alt={alt}
-            className="tbib-iv-image"
+            className={`tbib-iv-image ${imageStatus === "loaded" ? "tbib-iv-image-loaded" : "tbib-iv-image-loading"}`}
             onLoad={handleImageLoad}
-            crossOrigin="anonymous"
+            onError={handleImageError}
             draggable={false}
           />
 
           {/* Hand-Free Annotation Layer */}
-          {enableAnnotations && (
+          {enableAnnotations && imageStatus === "loaded" && (
             <AnnotationCanvas
               width={imgSize.width}
               height={imgSize.height}
@@ -286,8 +325,52 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
           )}
         </div>
 
-        {/* Laser Cursor Layer: Sits at stage viewport level so laser point is 100% 1:1 with cursor at any zoom/pan/rotate */}
-        {enableLaser && activeTool === "laser" && (
+        {/* Loading Spinner Overlay */}
+        {imageStatus === "loading" && (
+          <div className="tbib-iv-status-overlay">
+            <div className="tbib-iv-spinner">
+              <FontAwesomeIcon icon={faSpinner} spin className="tbib-iv-spinner-icon" />
+            </div>
+            <span className="tbib-iv-status-text">Chargement de l'illustration...</span>
+          </div>
+        )}
+
+        {/* Error / Reload State Overlay */}
+        {imageStatus === "error" && (
+          <div className="tbib-iv-status-overlay tbib-iv-error-card">
+            <div className="tbib-iv-error-icon">
+              <FontAwesomeIcon icon={faExclamationTriangle} />
+            </div>
+            <h3 className="tbib-iv-error-title">Impossible de charger l'image</h3>
+            <p className="tbib-iv-error-desc">
+              Le fichier est temporairement inaccessible ou une erreur réseau est survenue.
+            </p>
+            <div className="tbib-iv-error-actions">
+              <button
+                type="button"
+                className="tbib-iv-btn tbib-iv-btn-primary tbib-iv-retry-btn"
+                onClick={handleReload}
+              >
+                <FontAwesomeIcon icon={faRotateRight} />
+                <span>Réessayer</span>
+              </button>
+              {src && (
+                <a
+                  href={src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tbib-iv-btn tbib-iv-open-btn"
+                >
+                  <FontAwesomeIcon icon={faExternalLinkAlt} />
+                  <span>Lien direct</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Laser Cursor Layer */}
+        {enableLaser && activeTool === "laser" && imageStatus === "loaded" && (
           <LaserCursorLayer color={color} secondaryColor={color} enabled={activeTool === "laser"} />
         )}
       </div>

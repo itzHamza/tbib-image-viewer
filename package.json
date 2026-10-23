@@ -6,7 +6,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build:core": "npm run build --workspace=@tbib-image-viewer/core",
+    "build:react": "npm run build --workspace=@tbib-image-viewer/react",
+    "build:demo": "npm run build --workspace=@tbib-image-viewer/demo",
+    "build": "npm run build:core && npm run build:react && npm run build:demo",
     "test": "npm run test --workspaces --if-present",
     "dev": "npm run dev --workspace=@tbib-image-viewer/demo"
   },

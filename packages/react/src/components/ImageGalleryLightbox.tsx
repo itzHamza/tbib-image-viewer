@@ -1,6 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faChevronRight,
+  faSpinner,
+  faRotateRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons/faExternalLinkAlt";
 import type {
   AnnotationStroke,
   InteractionMode,
@@ -71,10 +78,49 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
     resetTransform();
   }, [currentIndex, resetTransform]);
 
-  // Image size state
+  // Image size & loading state
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgSize, setImgSize] = useState({ width: 800, height: 600 });
+  const [imageStatus, setImageStatus] = useState<"loading" | "loaded" | "error">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const effectiveSrc = useMemo(() => {
+    if (!currentItem?.src) return "";
+    if (reloadKey === 0) return currentItem.src;
+    const sep = currentItem.src.includes("?") ? "&" : "?";
+    return `${currentItem.src}${sep}_reload=${reloadKey}`;
+  }, [currentItem?.src, reloadKey]);
+
+  useEffect(() => {
+    setImageStatus("loading");
+    setReloadKey(0);
+    if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
+      setImgSize({
+        width: imgRef.current.naturalWidth,
+        height: imgRef.current.naturalHeight,
+      });
+      setImageStatus("loaded");
+    }
+  }, [currentIndex, currentItem?.src]);
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    setImgSize({
+      width: img.naturalWidth || img.width,
+      height: img.naturalHeight || img.height,
+    });
+    setImageStatus("loaded");
+  };
+
+  const handleImageError = () => {
+    setImageStatus("error");
+  };
+
+  const handleReload = () => {
+    setImageStatus("loading");
+    setReloadKey((prev) => prev + 1);
+  };
 
   // Pan dragging
   const isDraggingRef = useRef(false);
@@ -336,34 +382,75 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
         >
           <img
             ref={imgRef}
-            src={currentItem.src}
+            key={`${slideId}-${reloadKey}`}
+            src={effectiveSrc}
             alt={currentItem.alt || currentItem.title || `Gallery slide ${currentIndex + 1}`}
-            className="tbib-iv-image"
-            onLoad={(e) => {
-              const img = e.currentTarget;
-              setImgSize({
-                width: img.naturalWidth || img.width,
-                height: img.naturalHeight || img.height,
-              });
-            }}
-            crossOrigin="anonymous"
+            className={`tbib-iv-image ${imageStatus === "loaded" ? "tbib-iv-image-loaded" : "tbib-iv-image-loading"}`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
             draggable={false}
           />
 
-          <AnnotationCanvas
-            width={imgSize.width}
-            height={imgSize.height}
-            strokes={strokes}
-            activeTool={activeTool}
-            color={color}
-            strokeWidth={strokeWidth}
-            onStrokeComplete={handleStrokeComplete}
-            onEraseStroke={handleEraseStroke}
-          />
+          {imageStatus === "loaded" && (
+            <AnnotationCanvas
+              width={imgSize.width}
+              height={imgSize.height}
+              strokes={strokes}
+              activeTool={activeTool}
+              color={color}
+              strokeWidth={strokeWidth}
+              onStrokeComplete={handleStrokeComplete}
+              onEraseStroke={handleEraseStroke}
+            />
+          )}
         </div>
 
-        {/* Laser Cursor Layer: Sits at stage viewport level so laser point is 100% 1:1 with cursor at any zoom/pan/rotate */}
-        {activeTool === "laser" && (
+        {/* Loading Spinner Overlay */}
+        {imageStatus === "loading" && (
+          <div className="tbib-iv-status-overlay">
+            <div className="tbib-iv-spinner">
+              <FontAwesomeIcon icon={faSpinner} spin className="tbib-iv-spinner-icon" />
+            </div>
+            <span className="tbib-iv-status-text">Chargement de l'illustration...</span>
+          </div>
+        )}
+
+        {/* Error / Reload State Overlay */}
+        {imageStatus === "error" && (
+          <div className="tbib-iv-status-overlay tbib-iv-error-card">
+            <div className="tbib-iv-error-icon">
+              <FontAwesomeIcon icon={faExclamationTriangle} />
+            </div>
+            <h3 className="tbib-iv-error-title">Impossible de charger l'image</h3>
+            <p className="tbib-iv-error-desc">
+              Le fichier est temporairement inaccessible ou une erreur réseau est survenue.
+            </p>
+            <div className="tbib-iv-error-actions">
+              <button
+                type="button"
+                className="tbib-iv-btn tbib-iv-btn-primary tbib-iv-retry-btn"
+                onClick={handleReload}
+              >
+                <FontAwesomeIcon icon={faRotateRight} />
+                <span>Réessayer</span>
+              </button>
+              {currentItem?.src && (
+                <a
+                  href={currentItem.src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tbib-iv-btn tbib-iv-open-btn"
+                >
+                  <FontAwesomeIcon icon={faExternalLinkAlt} />
+                  <span>Lien direct</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Laser Cursor Layer */}
+        {activeTool === "laser" && imageStatus === "loaded" && (
           <LaserCursorLayer color={color} secondaryColor={color} enabled={activeTool === "laser"} />
         )}
       </div>
