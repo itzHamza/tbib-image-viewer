@@ -1,6 +1,6 @@
 {
   "name": "@tbib-image-viewer/react",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "High-performance React Image Viewer & Swipe Gallery with Hand-Free Annotation Suite",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -28,7 +28,7 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@tbib-image-viewer/core": "^0.1.3",
+    "@tbib-image-viewer/core": "^0.1.4",
     "ogl": "^1.0.11"
   },
   "devDependencies": {

@@ -86,7 +86,7 @@
   box-shadow: var(--tbib-iv-shadow);
   border-radius: 1rem;
   padding: 6px 8px;
-  max-width: calc(100dvw - 20dvw);
+  max-width : calc(100dvw - 20dvw);
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
