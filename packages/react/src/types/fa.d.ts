@@ -1,0 +1,36 @@
+declare module "@fortawesome/free-solid-svg-icons" {
+  import type { IconDefinition } from "@fortawesome/fontawesome-common-types";
+  export const faHand: IconDefinition;
+  export const faPen: IconDefinition;
+  export const faHighlighter: IconDefinition;
+  export const faCrosshairs: IconDefinition;
+  export const faEraser: IconDefinition;
+  export const faRotateLeft: IconDefinition;
+  export const faRotateRight: IconDefinition;
+  export const faTrashCan: IconDefinition;
+  export const faMagnifyingGlassPlus: IconDefinition;
+  export const faMagnifyingGlassMinus: IconDefinition;
+  export const faExpand: IconDefinition;
+  export const faRotate: IconDefinition;
+  export const faXmark: IconDefinition;
+  export const faExpandAlt: IconDefinition;
+  export const faCompressAlt: IconDefinition;
+  export const faPalette: IconDefinition;
+  export const faCircle: IconDefinition;
+  export const faDownload: IconDefinition;
+  export const faImage: IconDefinition;
+  export const faPaintBrush: IconDefinition;
+  export const faFileCode: IconDefinition;
+  export const faSpinner: IconDefinition;
+  export const faChevronLeft: IconDefinition;
+  export const faChevronRight: IconDefinition;
+  export const faImages: IconDefinition;
+  export const faMoon: IconDefinition;
+  export const faSun: IconDefinition;
+  export const faUpload: IconDefinition;
+  export const faCircleCheck: IconDefinition;
+  export const faBookMedical: IconDefinition;
+  export const faPenFancy: IconDefinition;
+  const icons: Record<string, IconDefinition>;
+  export default icons;
+}

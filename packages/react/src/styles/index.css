@@ -1,0 +1,333 @@
+/* TBiB Image Viewer & Gallery Stylesheet (DESIGN.md Compliant) */
+
+:root {
+  --tbib-iv-bg: #0b1120;
+  --tbib-iv-surface: #131f37;
+  --tbib-iv-surface-hover: #1e293b;
+  --tbib-iv-border: rgba(148, 163, 184, 0.2);
+  --tbib-iv-border-active: rgba(139, 92, 246, 0.6);
+  --tbib-iv-text: #f8fafc;
+  --tbib-iv-text-muted: #94a3b8;
+  --tbib-iv-accent: #8b5cf6;
+  --tbib-iv-accent-hover: #7c3aed;
+  --tbib-iv-accent-subtle: rgba(139, 92, 246, 0.15);
+  --tbib-iv-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+}
+
+.tbib-iv-light {
+  --tbib-iv-bg: #f8fafc;
+  --tbib-iv-surface: #ffffff;
+  --tbib-iv-surface-hover: #f1f5f9;
+  --tbib-iv-border: rgba(148, 163, 184, 0.35);
+  --tbib-iv-border-active: rgba(79, 70, 229, 0.7);
+  --tbib-iv-text: #0f172a;
+  --tbib-iv-text-muted: #64748b;
+  --tbib-iv-accent: #4f46e5;
+  --tbib-iv-accent-hover: #4338ca;
+  --tbib-iv-accent-subtle: rgba(79, 70, 229, 0.12);
+  --tbib-iv-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+}
+
+/* Container Root */
+.tbib-iv-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  overflow: hidden;
+  user-select: none;
+  background-color: var(--tbib-iv-bg);
+  color: var(--tbib-iv-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.tbib-iv-container * {
+  box-sizing: border-box;
+}
+
+/* Modal Lightbox Overlay */
+.tbib-iv-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(5, 9, 20, 0.94);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top Toolbar */
+.tbib-iv-toolbar-wrapper {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+.tbib-iv-toolbar {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  box-shadow: var(--tbib-iv-shadow);
+  border-radius: 1rem;
+  padding: 6px 8px;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tbib-iv-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Toolbar Divider */
+.tbib-iv-divider {
+  width: 1px;
+  height: 22px;
+  background-color: var(--tbib-iv-border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Toolbar Action Button */
+.tbib-iv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--tbib-iv-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+.tbib-iv-btn:hover {
+  background-color: var(--tbib-iv-surface-hover);
+}
+
+.tbib-iv-btn:active {
+  transform: scale(0.96);
+}
+
+.tbib-iv-btn:focus-visible {
+  outline: 2px solid var(--tbib-iv-accent);
+  outline-offset: 2px;
+}
+
+.tbib-iv-btn-active {
+  background: var(--tbib-iv-accent-subtle) !important;
+  color: var(--tbib-iv-accent) !important;
+  border-color: var(--tbib-iv-border-active) !important;
+  font-weight: 600;
+}
+
+.tbib-iv-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Badge & Numbers */
+.tbib-iv-tabular {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--tbib-iv-text-muted);
+  font-weight: 600;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+/* Popovers & Dropdowns */
+.tbib-iv-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  box-shadow: var(--tbib-iv-shadow);
+  border-radius: 0.75rem;
+  padding: 8px;
+  z-index: 60;
+  display: flex;
+  gap: 6px;
+}
+
+/* Color Circle Swatches */
+.tbib-iv-color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+  padding: 0;
+}
+
+.tbib-iv-color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.tbib-iv-color-swatch-active {
+  border-color: var(--tbib-iv-text);
+  transform: scale(1.15);
+}
+
+/* Viewport Stage */
+.tbib-iv-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.tbib-iv-stage-inner {
+  position: relative;
+  will-change: transform;
+  transform-origin: center center;
+  user-select: none;
+}
+
+/* Image Element */
+.tbib-iv-image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+/* Annotation SVG Layer */
+.tbib-iv-annotation-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Nav arrows on sides */
+.tbib-iv-nav-prev,
+.tbib-iv-nav-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  color: var(--tbib-iv-text);
+  box-shadow: var(--tbib-iv-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tbib-iv-nav-prev {
+  left: 16px;
+}
+
+.tbib-iv-nav-next {
+  right: 16px;
+}
+
+.tbib-iv-nav-prev:hover,
+.tbib-iv-nav-next:hover {
+  background: var(--tbib-iv-surface-hover);
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Bottom Thumbnail Strip */
+.tbib-iv-thumbnail-strip {
+  position: absolute;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tbib-iv-surface);
+  border: 1px solid var(--tbib-iv-border);
+  border-radius: 1rem;
+  padding: 6px 10px;
+  z-index: 50;
+  max-width: min(90vw, 600px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tbib-iv-thumbnail-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.tbib-iv-thumbnail-item:hover {
+  opacity: 0.9;
+}
+
+.tbib-iv-thumbnail-item-active {
+  border-color: var(--tbib-iv-accent);
+  opacity: 1;
+}
+
+.tbib-iv-thumbnail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Small Screens / Mobile Specific Tweaks */
+@media (max-width: 640px) {
+  .tbib-iv-toolbar {
+    padding: 4px 6px;
+    gap: 2px;
+  }
+  .tbib-iv-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 6px;
+  }
+  .tbib-iv-nav-prev {
+    left: 8px;
+    width: 38px;
+    height: 38px;
+  }
+  .tbib-iv-nav-next {
+    right: 8px;
+    width: 38px;
+    height: 38px;
+  }
+}
