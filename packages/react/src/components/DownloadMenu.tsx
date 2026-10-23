@@ -152,7 +152,6 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
             <FontAwesomeIcon icon={faImage} style={{ fontSize: "13px" }} />
             <span>Clean Image (Original)</span>
           </button>
-
         </div>
       )}
     </div>
