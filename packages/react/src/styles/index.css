@@ -249,7 +249,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
-  touch-action: manipulation;
+  touch-action: pan-x;
   flex-shrink: 0;
 }
 
@@ -592,13 +592,13 @@
 /* Small Screens / Mobile Specific Tweaks */
 @media (max-width: 640px) {
   .tbib-iv-toolbar-wrapper {
-    padding: 0 6px;
+    padding: 0 4px;
     top: max(8px, env(safe-area-inset-top));
     width: 100%;
     align-items: center;
   }
   .tbib-iv-toolbar {
-    max-width: calc(100vw - 12px);
+    max-width: min(calc(100vw - 12px), calc(100dvw - 12px));
     width: max-content;
     padding: 4px 6px;
     gap: 3px;
@@ -606,9 +606,10 @@
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x;
+    overscroll-behavior-x: contain;
   }
   .tbib-iv-subtoolbar {
-    max-width: calc(100vw - 12px);
+    max-width: min(calc(100vw - 12px), calc(100dvw - 12px));
     width: max-content;
     padding: 4px 6px;
     gap: 5px;
@@ -616,12 +617,14 @@
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x;
+    overscroll-behavior-x: contain;
   }
   .tbib-iv-btn {
     min-width: 32px;
     height: 32px;
     padding: 0 5px;
     font-size: 13px;
+    touch-action: pan-x;
   }
   .tbib-iv-swatch-btn {
     width: 20px;

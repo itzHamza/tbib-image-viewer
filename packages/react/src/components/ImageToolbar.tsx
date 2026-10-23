@@ -94,10 +94,62 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
 }) => {
   const showSubtoolbar = activeTool === "pen" || activeTool === "highlighter" || activeTool === "laser";
 
+  const toolbarRef = React.useRef<HTMLElement>(null);
+  const subtoolbarRef = React.useRef<HTMLDivElement>(null);
+
+  const toolbarTouchState = React.useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+  const subtoolbarTouchState = React.useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+
+  const handleToolbarTouchStart = (e: React.TouchEvent) => {
+    if (!toolbarRef.current) return;
+    toolbarTouchState.current = {
+      isDown: true,
+      startX: e.touches[0].clientX,
+      scrollLeft: toolbarRef.current.scrollLeft,
+    };
+  };
+
+  const handleToolbarTouchMove = (e: React.TouchEvent) => {
+    if (!toolbarTouchState.current.isDown || !toolbarRef.current) return;
+    const dx = e.touches[0].clientX - toolbarTouchState.current.startX;
+    toolbarRef.current.scrollLeft = toolbarTouchState.current.scrollLeft - dx;
+  };
+
+  const handleToolbarTouchEnd = () => {
+    toolbarTouchState.current.isDown = false;
+  };
+
+  const handleSubtoolbarTouchStart = (e: React.TouchEvent) => {
+    if (!subtoolbarRef.current) return;
+    subtoolbarTouchState.current = {
+      isDown: true,
+      startX: e.touches[0].clientX,
+      scrollLeft: subtoolbarRef.current.scrollLeft,
+    };
+  };
+
+  const handleSubtoolbarTouchMove = (e: React.TouchEvent) => {
+    if (!subtoolbarTouchState.current.isDown || !subtoolbarRef.current) return;
+    const dx = e.touches[0].clientX - subtoolbarTouchState.current.startX;
+    subtoolbarRef.current.scrollLeft = subtoolbarTouchState.current.scrollLeft - dx;
+  };
+
+  const handleSubtoolbarTouchEnd = () => {
+    subtoolbarTouchState.current.isDown = false;
+  };
+
   return (
     <div className="tbib-iv-toolbar-wrapper">
       {/* Primary Toolbar Row */}
-      <header className="tbib-iv-toolbar" role="toolbar" aria-label="Image tools">
+      <header
+        ref={toolbarRef}
+        className="tbib-iv-toolbar"
+        role="toolbar"
+        aria-label="Image tools"
+        onTouchStart={handleToolbarTouchStart}
+        onTouchMove={handleToolbarTouchMove}
+        onTouchEnd={handleToolbarTouchEnd}
+      >
         {/* Gallery slide indicator */}
         {currentIndex !== undefined && totalImages !== undefined && totalImages > 1 && (
           <>
@@ -287,7 +339,15 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
 
       {/* Secondary Subtoolbar: Directly displays Stroke Thickness & Color Swatches */}
       {showSubtoolbar && (
-        <div className="tbib-iv-subtoolbar" role="region" aria-label="Tool customization">
+        <div
+          ref={subtoolbarRef}
+          className="tbib-iv-subtoolbar"
+          role="region"
+          aria-label="Tool customization"
+          onTouchStart={handleSubtoolbarTouchStart}
+          onTouchMove={handleSubtoolbarTouchMove}
+          onTouchEnd={handleSubtoolbarTouchEnd}
+        >
           {/* Thickness buttons (for pen and highlighter) */}
           {activeTool !== "laser" && (
             <div className="tbib-iv-thickness-group">
