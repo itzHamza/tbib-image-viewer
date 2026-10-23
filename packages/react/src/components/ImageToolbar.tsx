@@ -16,10 +16,9 @@ import {
   faXmark,
   faExpandAlt,
   faCompressAlt,
+  faEyeDropper,
 } from "@fortawesome/free-solid-svg-icons";
 import type { InteractionMode } from "@tbib-image-viewer/core";
-import { ColorPicker } from "./ColorPicker";
-import { StrokeWidthPicker } from "./StrokeWidthPicker";
 import { DownloadMenu } from "./DownloadMenu";
 
 export interface ImageToolbarProps {
@@ -49,6 +48,24 @@ export interface ImageToolbarProps {
   totalImages?: number;
 }
 
+const PRESET_COLORS = [
+  "#ef4444", // Red
+  "#f97316", // Orange
+  "#eab308", // Yellow
+  "#10b981", // Green
+  "#06b6d4", // Cyan
+  "#8b5cf6", // Purple
+  "#ffffff", // White
+  "#0f172a", // Black
+];
+
+const THICKNESS_OPTIONS = [
+  { label: "Fine", value: 2 },
+  { label: "Medium", value: 4 },
+  { label: "Bold", value: 7 },
+  { label: "Heavy", value: 12 },
+];
+
 export const ImageToolbar: React.FC<ImageToolbarProps> = ({
   activeTool,
   onToolChange,
@@ -75,10 +92,11 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
   currentIndex,
   totalImages,
 }) => {
-  const showColorStroke = activeTool === "pen" || activeTool === "highlighter" || activeTool === "laser";
+  const showSubtoolbar = activeTool === "pen" || activeTool === "highlighter" || activeTool === "laser";
 
   return (
     <div className="tbib-iv-toolbar-wrapper">
+      {/* Primary Toolbar Row */}
       <header className="tbib-iv-toolbar" role="toolbar" aria-label="Image tools">
         {/* Gallery slide indicator */}
         {currentIndex !== undefined && totalImages !== undefined && totalImages > 1 && (
@@ -144,17 +162,6 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
         >
           <FontAwesomeIcon icon={faEraser} />
         </button>
-
-        {/* Color and stroke width if drawing tool active */}
-        {showColorStroke && (
-          <>
-            <div className="tbib-iv-divider" />
-            <ColorPicker color={color} onChange={onColorChange} />
-            {activeTool !== "laser" && (
-              <StrokeWidthPicker strokeWidth={strokeWidth} onChange={onStrokeWidthChange} />
-            )}
-          </>
-        )}
 
         <div className="tbib-iv-divider" />
 
@@ -277,6 +284,75 @@ export const ImageToolbar: React.FC<ImageToolbarProps> = ({
           </>
         )}
       </header>
+
+      {/* Secondary Subtoolbar: Directly displays Stroke Thickness & Color Swatches */}
+      {showSubtoolbar && (
+        <div className="tbib-iv-subtoolbar" role="region" aria-label="Tool customization">
+          {/* Thickness buttons (for pen and highlighter) */}
+          {activeTool !== "laser" && (
+            <div className="tbib-iv-thickness-group">
+              {THICKNESS_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  className={`tbib-iv-thickness-btn ${strokeWidth === opt.value ? "tbib-iv-thickness-active" : ""}`}
+                  onClick={() => onStrokeWidthChange(opt.value)}
+                  title={`${opt.label} stroke (${opt.value}px)`}
+                >
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: `${Math.min(opt.value * 1.5, 12)}px`,
+                      height: `${Math.min(opt.value * 1.5, 12)}px`,
+                      borderRadius: "50%",
+                      backgroundColor: "currentColor",
+                    }}
+                  />
+                  <span>{opt.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {activeTool === "laser" && (
+            <span style={{ fontSize: "11px", color: "var(--tbib-iv-text-muted)", fontStyle: "italic", paddingRight: "4px" }}>
+              Laser Beam Color:
+            </span>
+          )}
+
+          <div className="tbib-iv-divider" style={{ height: "16px", margin: "0 2px" }} />
+
+          {/* Color swatches */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            {PRESET_COLORS.map((c) => {
+              const isSelected = color.toLowerCase() === c.toLowerCase();
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  className={`tbib-iv-swatch-btn ${isSelected ? "tbib-iv-swatch-active" : ""}`}
+                  style={{ backgroundColor: c }}
+                  onClick={() => onColorChange(c)}
+                  title={`Select color: ${c}`}
+                  aria-label={`Color ${c}`}
+                />
+              );
+            })}
+
+            {/* Custom Color Picker Input */}
+            <label className="tbib-iv-custom-color-btn" title="Custom Color Picker">
+              <FontAwesomeIcon icon={faEyeDropper} style={{ fontSize: "10px", opacity: 0.8 }} />
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => onColorChange(e.target.value)}
+                className="tbib-iv-custom-color-input"
+                aria-label="Custom color picker"
+              />
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

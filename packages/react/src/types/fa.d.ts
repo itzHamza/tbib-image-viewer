@@ -31,6 +31,7 @@ declare module "@fortawesome/free-solid-svg-icons" {
   export const faCircleCheck: IconDefinition;
   export const faBookMedical: IconDefinition;
   export const faPenFancy: IconDefinition;
+  export const faEyeDropper: IconDefinition;
   const icons: Record<string, IconDefinition>;
   export default icons;
 }

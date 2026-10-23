@@ -231,9 +231,12 @@ export const LaserCursorLayer: React.FC<LaserCursorLayerProps> = ({
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
-      if (width <= 0 || height <= 0) return;
+      const newWidth = Math.floor(rect.width);
+      const newHeight = Math.floor(rect.height);
+      if (newWidth <= 0 || newHeight <= 0) return;
+      if (newWidth === width && newHeight === height) return;
+      width = newWidth;
+      height = newHeight;
       renderer?.setSize(width, height);
       program.uniforms.uResolution.value = [width, height];
     };
@@ -333,11 +336,35 @@ export const LaserCursorLayer: React.FC<LaserCursorLayerProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`absolute inset-0 pointer-events-auto touch-none cursor-crosshair z-30 ${className}`}
-      style={style}
+      className={`tbib-iv-laser-layer ${className}`}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "auto",
+        touchAction: "none",
+        cursor: "crosshair",
+        zIndex: 30,
+        overflow: "hidden",
+        ...style,
+      }}
       {...rest}
     >
-      <canvas ref={canvasRef} className="w-full h-full block" />
+      <canvas
+        ref={canvasRef}
+        className="tbib-iv-laser-canvas"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "block",
+          pointerEvents: "none",
+        }}
+      />
     </div>
   );
 };
