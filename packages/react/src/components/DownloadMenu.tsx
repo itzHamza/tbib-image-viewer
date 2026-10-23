@@ -6,6 +6,7 @@ import {
   faPaintBrush,
   faFileCode,
   faSpinner,
+  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 
 export interface DownloadMenuProps {
@@ -38,6 +39,7 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
   }, [isOpen]);
 
   const handleAnnotated = async () => {
+    if (isExporting) return;
     setIsExporting(true);
     try {
       await onDownloadAnnotated();
@@ -48,6 +50,7 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
   };
 
   const handleClean = async () => {
+    if (isExporting) return;
     setIsExporting(true);
     try {
       await onDownloadClean();
@@ -58,13 +61,27 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
   };
 
   return (
-    <div ref={containerRef} style={{ position: "relative", display: "inline-block" }}>
+    <div
+      ref={containerRef}
+      style={{
+        position: "relative",
+        display: "inline-flex",
+        alignItems: "center",
+      }}
+    >
+      {/* Primary Download Button: 1-click downloads annotated PNG */}
       <button
         type="button"
         className="tbib-iv-btn"
-        title="Download / Export"
+        title="Download Annotated Image (1-Click PNG)"
+        aria-label="Download Image"
         disabled={isExporting}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={handleAnnotated}
+        style={{
+          borderTopRightRadius: 0,
+          borderBottomRightRadius: 0,
+          paddingRight: "6px",
+        }}
       >
         <FontAwesomeIcon
           icon={isExporting ? faSpinner : faDownload}
@@ -73,15 +90,35 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
         />
       </button>
 
+      {/* Dropdown Caret: Toggles other export formats */}
+      <button
+        type="button"
+        className="tbib-iv-btn"
+        title="More Download Options"
+        aria-label="More Download Options"
+        disabled={isExporting}
+        onClick={() => setIsOpen((prev) => !prev)}
+        style={{
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+          paddingLeft: "4px",
+          paddingRight: "6px",
+          minWidth: "20px",
+          borderLeft: "1px solid var(--tbib-iv-border)",
+        }}
+      >
+        <FontAwesomeIcon icon={faChevronDown} style={{ fontSize: "10px", opacity: 0.8 }} />
+      </button>
+
       {isOpen && (
         <div
           className="tbib-iv-popover"
           style={{
             flexDirection: "column",
-            minWidth: "190px",
+            minWidth: "210px",
             right: 0,
             left: "auto",
-            padding: "6px",
+            zIndex: 100,
           }}
         >
           <button
@@ -96,7 +133,7 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
             }}
             onClick={handleAnnotated}
           >
-            <FontAwesomeIcon icon={faPaintBrush} style={{ fontSize: "13px" }} />
+            <FontAwesomeIcon icon={faPaintBrush} style={{ fontSize: "13px", color: "var(--tbib-iv-accent)" }} />
             <span>Annotated Image (PNG)</span>
           </button>
 
@@ -116,26 +153,6 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
             <span>Clean Image (Original)</span>
           </button>
 
-          {onExportJson && (
-            <button
-              type="button"
-              className="tbib-iv-btn"
-              style={{
-                width: "100%",
-                justifyContent: "flex-start",
-                gap: "10px",
-                padding: "8px 10px",
-                fontSize: "12px",
-              }}
-              onClick={() => {
-                onExportJson();
-                setIsOpen(false);
-              }}
-            >
-              <FontAwesomeIcon icon={faFileCode} style={{ fontSize: "13px" }} />
-              <span>Export Strokes (JSON)</span>
-            </button>
-          )}
         </div>
       )}
     </div>

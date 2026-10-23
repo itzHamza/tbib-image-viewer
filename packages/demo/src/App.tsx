@@ -212,29 +212,6 @@ export const App: React.FC = () => {
               <span>Swipe Gallery Lightbox</span>
             </button>
           </div>
-
-          {/* Quick Trigger Button for Lightbox */}
-          <button
-            type="button"
-            onClick={() => setIsLightboxOpen(true)}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "8px 16px",
-              borderRadius: "10px",
-              backgroundColor: "#8b5cf6",
-              color: "#ffffff",
-              border: "none",
-              fontSize: "13px",
-              fontWeight: "600",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(139, 92, 246, 0.35)",
-            }}
-          >
-            <FontAwesomeIcon icon={faExpand} />
-            <span>Open Fullscreen Gallery</span>
-          </button>
         </div>
 
         {/* Gallery Thumbnails Selector */}
@@ -265,9 +242,6 @@ export const App: React.FC = () => {
             >
               <p style={{ fontSize: "13px", fontWeight: "600", marginBottom: "2px" }}>
                 {item.title}
-              </p>
-              <p style={{ fontSize: "11px", color: theme === "dark" ? "#94a3b8" : "#64748b" }}>
-                Slide #{idx + 1}
               </p>
             </div>
           ))}

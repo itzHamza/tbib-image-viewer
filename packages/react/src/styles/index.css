@@ -83,9 +83,8 @@
   border-radius: 1rem;
   padding: 6px 8px;
   max-width: calc(100vw - 24px);
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  overflow: visible;
+  position: relative;
 }
 
 .tbib-iv-toolbar::-webkit-scrollbar {
@@ -285,8 +284,10 @@
   box-shadow: var(--tbib-iv-shadow);
   border-radius: 0.75rem;
   padding: 6px;
-  z-index: 60;
+  z-index: 100;
   display: flex;
+  backdrop-filter: blur(12px);
+  animation: tbib-slide-down 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Viewport Stage */

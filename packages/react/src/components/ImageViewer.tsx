@@ -284,12 +284,12 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
               onEraseStroke={handleEraseStroke}
             />
           )}
-
-          {/* Laser Cursor Layer */}
-          {enableLaser && activeTool === "laser" && (
-            <LaserCursorLayer color={color} secondaryColor={color} enabled={activeTool === "laser"} />
-          )}
         </div>
+
+        {/* Laser Cursor Layer: Sits at stage viewport level so laser point is 100% 1:1 with cursor at any zoom/pan/rotate */}
+        {enableLaser && activeTool === "laser" && (
+          <LaserCursorLayer color={color} secondaryColor={color} enabled={activeTool === "laser"} />
+        )}
       </div>
 
       {children}

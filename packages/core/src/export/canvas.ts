@@ -121,29 +121,40 @@ export async function downloadAnnotatedImage(
     fileName = `tbib-annotated-image-${Date.now()}.${format === "image/jpeg" ? "jpg" : format === "image/webp" ? "webp" : "png"}`,
   } = options;
 
-  const canvas = await renderToOffscreenCanvas(imageSource, strokes, options);
+  try {
+    const canvas = await renderToOffscreenCanvas(imageSource, strokes, options);
 
-  return new Promise<void>((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error("Failed to generate image blob from canvas"));
-          return;
-        }
+    return new Promise<void>((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error("Failed to generate image blob from canvas"));
+            return;
+          }
 
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
 
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        resolve();
-      },
-      format,
-      quality
-    );
-  });
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          resolve();
+        },
+        format,
+        quality
+      );
+    });
+  } catch (err) {
+    console.warn("Offscreen canvas render encountered an issue, falling back to direct asset download:", err);
+    const src = typeof imageSource === "string" ? imageSource : imageSource.src;
+    const link = document.createElement("a");
+    link.href = src;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }

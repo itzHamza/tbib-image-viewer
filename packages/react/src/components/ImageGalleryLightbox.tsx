@@ -360,11 +360,12 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
             onStrokeComplete={handleStrokeComplete}
             onEraseStroke={handleEraseStroke}
           />
-
-          {activeTool === "laser" && (
-            <LaserCursorLayer color={color} secondaryColor={color} enabled={activeTool === "laser"} />
-          )}
         </div>
+
+        {/* Laser Cursor Layer: Sits at stage viewport level so laser point is 100% 1:1 with cursor at any zoom/pan/rotate */}
+        {activeTool === "laser" && (
+          <LaserCursorLayer color={color} secondaryColor={color} enabled={activeTool === "laser"} />
+        )}
       </div>
 
       {/* Bottom Thumbnail Strip */}
