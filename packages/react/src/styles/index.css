@@ -78,7 +78,7 @@
 /* Main Toolbar */
 .tbib-iv-toolbar {
   pointer-events: auto;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 4px;
   background: var(--tbib-iv-surface);
@@ -86,8 +86,14 @@
   box-shadow: var(--tbib-iv-shadow);
   border-radius: 1rem;
   padding: 6px 8px;
-  max-width: calc(100vw - 24px);
-  overflow: visible;
+  max-width: calc(100vw - 20px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  white-space: nowrap;
+  flex-shrink: 0;
   position: relative;
 }
 
@@ -98,7 +104,7 @@
 /* Secondary Sub-toolbar for Colors & Thickness */
 .tbib-iv-subtoolbar {
   pointer-events: auto;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   background: var(--tbib-iv-surface);
@@ -106,10 +112,14 @@
   box-shadow: var(--tbib-iv-shadow);
   border-radius: 0.85rem;
   padding: 5px 10px;
-  max-width: calc(100vw - 24px);
+  max-width: calc(100vw - 20px);
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  white-space: nowrap;
+  flex-shrink: 0;
   animation: tbib-slide-down 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -581,18 +591,41 @@
 
 /* Small Screens / Mobile Specific Tweaks */
 @media (max-width: 640px) {
+  .tbib-iv-toolbar-wrapper {
+    padding: 0 6px;
+    top: max(8px, env(safe-area-inset-top));
+    width: 100%;
+    align-items: center;
+  }
   .tbib-iv-toolbar {
+    max-width: calc(100vw - 12px);
+    width: max-content;
     padding: 4px 6px;
-    gap: 2px;
+    gap: 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
   .tbib-iv-subtoolbar {
+    max-width: calc(100vw - 12px);
+    width: max-content;
     padding: 4px 6px;
-    gap: 4px;
+    gap: 5px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
   .tbib-iv-btn {
-    min-width: 34px;
-    height: 34px;
-    padding: 0 6px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 5px;
+    font-size: 13px;
+  }
+  .tbib-iv-swatch-btn {
+    width: 20px;
+    height: 20px;
   }
   .tbib-iv-nav-prev {
     left: 8px;

@@ -40,6 +40,13 @@ export function useImageTransform() {
     }));
   }, []);
 
+  const pinchZoomByRatio = useCallback((startScale: number, ratio: number) => {
+    setTransform((prev) => ({
+      ...prev,
+      scale: clampScale(startScale * ratio),
+    }));
+  }, []);
+
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
@@ -85,6 +92,7 @@ export function useImageTransform() {
     resetTransform,
     rotateClockwise,
     panBy,
+    pinchZoomByRatio,
     handleWheel,
     handleTouchStart,
     handleTouchMove,

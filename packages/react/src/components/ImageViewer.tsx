@@ -92,6 +92,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
     resetTransform,
     rotateClockwise,
     panBy,
+    pinchZoomByRatio,
     handleWheel,
     handleTouchStart,
     handleTouchMove,
@@ -321,8 +322,11 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
               activeTool={activeTool}
               color={color}
               strokeWidth={strokeWidth}
+              currentScale={transform.scale}
               onStrokeComplete={handleStrokeComplete}
               onEraseStroke={handleEraseStroke}
+              onPinchZoom={pinchZoomByRatio}
+              onPinchPan={panBy}
             />
           )}
         </div>

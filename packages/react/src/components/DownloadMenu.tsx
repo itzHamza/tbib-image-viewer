@@ -22,7 +22,18 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [popoverPos, setPopoverPos] = useState({ top: 0, right: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setPopoverPos({
+        top: rect.bottom + 8,
+        right: Math.max(12, window.innerWidth - rect.right),
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -32,9 +43,11 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
     };
     if (isOpen) {
       document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("touchstart", handleOutsideClick as any);
     }
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick as any);
     };
   }, [isOpen]);
 
@@ -114,11 +127,12 @@ export const DownloadMenu: React.FC<DownloadMenuProps> = ({
         <div
           className="tbib-iv-popover"
           style={{
+            position: "fixed",
+            top: `${popoverPos.top}px`,
+            right: `${popoverPos.right}px`,
             flexDirection: "column",
             minWidth: "210px",
-            right: 0,
-            left: "auto",
-            zIndex: 100,
+            zIndex: 9999,
           }}
         >
           <button

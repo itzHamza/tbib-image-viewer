@@ -67,6 +67,7 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
     resetTransform,
     rotateClockwise,
     panBy,
+    pinchZoomByRatio,
     handleWheel,
     handleTouchStart,
     handleTouchMove,
@@ -401,8 +402,11 @@ export const ImageGalleryLightbox: React.FC<ImageGalleryLightboxProps> = ({
               activeTool={activeTool}
               color={color}
               strokeWidth={strokeWidth}
+              currentScale={transform.scale}
               onStrokeComplete={handleStrokeComplete}
               onEraseStroke={handleEraseStroke}
+              onPinchZoom={pinchZoomByRatio}
+              onPinchPan={panBy}
             />
           )}
         </div>
